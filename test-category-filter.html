@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Category Filtering</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .test-section {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+      }
+      .success {
+        background: #d4edda;
+        border-color: #c3e6cb;
+      }
+      .error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      pre {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HomeXPros Category Filtering Test</h1>
+
+    <div class="test-section">
+      <h2>Test 1: Get All Categories</h2>
+      <button onclick="testCategories()">Test Categories API</button>
+      <div id="categories-result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 2: Get All Services</h2>
+      <button onclick="testAllServices()">Test All Services</button>
+      <div id="services-result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 3: Filter by Home Cleaning Category</h2>
+      <button onclick="testCategoryFilter()">Test Category Filter</button>
+      <div id="category-filter-result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 4: Search API (Expected to Fail)</h2>
+      <button onclick="testSearchAPI()">Test Search API</button>
+      <div id="search-result"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api";
+      let homeCleaningCategoryId = "";
+
+      async function testCategories() {
+        const resultDiv = document.getElementById("categories-result");
+        resultDiv.innerHTML = "<p>Loading...</p>";
+
+        try {
+          const response = await fetch(`${API_BASE}/services/categories`);
+          const data = await response.json();
+
+          if (data.success && data.data) {
+            // Find Home Cleaning category
+            const homeCleaningCat = data.data.find((cat) => cat.name === "Home Cleaning");
+            if (homeCleaningCat) {
+              homeCleaningCategoryId = homeCleaningCat._id;
+            }
+
+            resultDiv.className = "test-section success";
+            resultDiv.innerHTML = `
+                        <h3>✅ Categories API Success</h3>
+                        <p>Found ${data.data.length} categories</p>
+                        <p><strong>Home Cleaning ID:</strong> ${homeCleaningCategoryId}</p>
+                        <pre>${JSON.stringify(data.data.slice(0, 3), null, 2)}</pre>
+                    `;
+          } else {
+            throw new Error("No categories found");
+          }
+        } catch (error) {
+          resultDiv.className = "test-section error";
+          resultDiv.innerHTML = `<h3>❌ Categories API Failed</h3><p>${error.message}</p>`;
+        }
+      }
+
+      async function testAllServices() {
+        const resultDiv = document.getElementById("services-result");
+        resultDiv.innerHTML = "<p>Loading...</p>";
+
+        try {
+          const response = await fetch(`${API_BASE}/services?limit=50`);
+          const data = await response.json();
+
+          if (data.success && data.data) {
+            resultDiv.className = "test-section success";
+            resultDiv.innerHTML = `
+                        <h3>✅ Services API Success</h3>
+                        <p>Found ${data.data.length} services</p>
+                        <pre>${JSON.stringify(data.data, null, 2)}</pre>
+                    `;
+          } else {
+            throw new Error("No services found");
+          }
+        } catch (error) {
+          resultDiv.className = "test-section error";
+          resultDiv.innerHTML = `<h3>❌ Services API Failed</h3><p>${error.message}</p>`;
+        }
+      }
+
+      async function testCategoryFilter() {
+        const resultDiv = document.getElementById("category-filter-result");
+        resultDiv.innerHTML = "<p>Loading...</p>";
+
+        if (!homeCleaningCategoryId) {
+          await testCategories();
+        }
+
+        try {
+          const response = await fetch(`${API_BASE}/services?category=${homeCleaningCategoryId}`);
+          const data = await response.json();
+
+          if (data.success) {
+            if (data.data && data.data.length > 0) {
+              resultDiv.className = "test-section success";
+              resultDiv.innerHTML = `
+                            <h3>✅ Category Filter Success</h3>
+                            <p>Found ${data.data.length} services for Home Cleaning</p>
+                            <pre>${JSON.stringify(data.data, null, 2)}</pre>
+                        `;
+            } else {
+              resultDiv.className = "test-section error";
+              resultDiv.innerHTML = `
+                            <h3>⚠️ Category Filter - No Results</h3>
+                            <p>API call succeeded but no services found for category: ${homeCleaningCategoryId}</p>
+                        `;
+            }
+          } else {
+            throw new Error("API returned success: false");
+          }
+        } catch (error) {
+          resultDiv.className = "test-section error";
+          resultDiv.innerHTML = `<h3>❌ Category Filter Failed</h3><p>${error.message}</p>`;
+        }
+      }
+
+      async function testSearchAPI() {
+        const resultDiv = document.getElementById("search-result");
+        resultDiv.innerHTML = "<p>Loading...</p>";
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/services/search?category=${homeCleaningCategoryId}`
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            if (data.data && data.data.length > 0) {
+              resultDiv.className = "test-section success";
+              resultDiv.innerHTML = `
+                            <h3>✅ Search API Success (Unexpected!)</h3>
+                            <p>Found ${data.data.length} services</p>
+                            <pre>${JSON.stringify(data.data, null, 2)}</pre>
+                        `;
+            } else {
+              resultDiv.className = "test-section error";
+              resultDiv.innerHTML = `
+                            <h3>⚠️ Search API - No Results (Expected)</h3>
+                            <p>This confirms the search API aggregation pipeline has issues</p>
+                            <p>The frontend fallback mechanism should handle this</p>
+                        `;
+            }
+          } else {
+            throw new Error("API returned success: false");
+          }
+        } catch (error) {
+          resultDiv.className = "test-section error";
+          resultDiv.innerHTML = `<h3>❌ Search API Failed</h3><p>${error.message}</p>`;
+        }
+      }
+
+      // Auto-run tests on page load
+      window.onload = function () {
+        testCategories();
+      };
+    </script>
+  </body>
+</html>

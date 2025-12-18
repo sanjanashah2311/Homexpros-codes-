@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test HomeXPros Search</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .service {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+      }
+      .category {
+        background: #f0f0f0;
+        padding: 5px 10px;
+        border-radius: 15px;
+        display: inline-block;
+        margin: 5px;
+      }
+      button {
+        background: #6366f1;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #4f46e5;
+      }
+      .loading {
+        color: #666;
+        font-style: italic;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HomeXPros Search Test</h1>
+
+    <div>
+      <button onclick="testCategories()">Test Categories API</button>
+      <button onclick="testServices()">Test Services API</button>
+      <button onclick="testSearch()">Test Search API</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api";
+
+      function showLoading() {
+        document.getElementById("results").innerHTML = '<div class="loading">Loading...</div>';
+      }
+
+      function showError(error) {
+        document.getElementById("results").innerHTML = `<div class="error">Error: ${error}</div>`;
+      }
+
+      function showResults(title, data) {
+        document.getElementById("results").innerHTML = `<h2>${title}</h2><pre>${JSON.stringify(
+          data,
+          null,
+          2
+        )}</pre>`;
+      }
+
+      async function testCategories() {
+        showLoading();
+        try {
+          const response = await fetch(`${API_BASE}/services/categories`);
+          const data = await response.json();
+
+          let html = "<h2>Categories</h2>";
+          if (data.success && data.data) {
+            html += `<p>Found ${data.data.length} categories:</p>`;
+            data.data.forEach((cat) => {
+              html += `<div class="category">${cat.icon} ${cat.name}</div>`;
+            });
+          } else {
+            html += "<p>No categories found</p>";
+          }
+
+          document.getElementById("results").innerHTML = html;
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      async function testServices() {
+        showLoading();
+        try {
+          const response = await fetch(`${API_BASE}/services?limit=50`);
+          const data = await response.json();
+
+          let html = "<h2>Services</h2>";
+          if (data.success && data.data) {
+            html += `<p>Found ${data.data.length} services:</p>`;
+            data.data.forEach((service) => {
+              html += `
+                            <div class="service">
+                                <h3>${service.name}</h3>
+                                <p><strong>Price:</strong> $${service.price}</p>
+                                <p><strong>Description:</strong> ${service.description}</p>
+                                <p><strong>Category:</strong> ${
+                                  service.category ? service.category.name || "Unknown" : "None"
+                                }</p>
+                                <p><strong>Active:</strong> ${service.isActive}</p>
+                                <p><strong>Provider:</strong> ${
+                                  service.provider ? service.provider._id : "Unknown"
+                                }</p>
+                            </div>
+                        `;
+            });
+          } else {
+            html += "<p>No services found</p>";
+          }
+
+          document.getElementById("results").innerHTML = html;
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      async function testSearch() {
+        showLoading();
+        try {
+          const response = await fetch(`${API_BASE}/services/search?q=cleaning`);
+          const data = await response.json();
+
+          let html = "<h2>Search Results (q=cleaning)</h2>";
+          if (data.success && data.data) {
+            html += `<p>Found ${data.data.length} results:</p>`;
+            data.data.forEach((service) => {
+              html += `
+                            <div class="service">
+                                <h3>${service.name}</h3>
+                                <p><strong>Price:</strong> $${service.price}</p>
+                                <p><strong>Description:</strong> ${service.description}</p>
+                                <p><strong>Category:</strong> ${
+                                  service.category ? service.category.name || "Unknown" : "None"
+                                }</p>
+                            </div>
+                        `;
+            });
+          } else {
+            html += "<p>No search results found</p>";
+          }
+
+          document.getElementById("results").innerHTML = html;
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      // Auto-test on load
+      window.onload = function () {
+        testServices();
+      };
+    </script>
+  </body>
+</html>

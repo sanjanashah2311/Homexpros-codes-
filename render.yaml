@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: urban-aid-backend
+    env: node
+    buildCommand: |
+      # Build server
+      cd server
+      npm install
+      npm run build
+      
+      # Verify dist directory contents
+      echo "Listing dist directory contents:"
+      ls -la dist
+    startCommand: cd server && NODE_PATH=./dist node dist/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRE
+        value: "30d"
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: EMAIL_SERVICE
+        sync: false
+      - key: EMAIL_USERNAME
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false

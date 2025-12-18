@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeXPros - Error Handling Demo</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+      }
+      .demo-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        border-left: 4px solid #667eea;
+      }
+      .demo-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .phone-examples {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 15px 0;
+      }
+      .example {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+      }
+      .valid {
+        border-color: #28a745;
+        background: #f8fff9;
+      }
+      .invalid {
+        border-color: #dc3545;
+        background: #fff8f8;
+      }
+      .status {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .valid .status {
+        color: #28a745;
+      }
+      .invalid .status {
+        color: #dc3545;
+      }
+      .toast-demo {
+        background: linear-gradient(to right, #ef4444, #dc2626);
+        color: white;
+        padding: 16px;
+        border-radius: 12px;
+        margin: 15px 0;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+      .feature-list {
+        list-style: none;
+        padding: 0;
+      }
+      .feature-list li {
+        padding: 8px 0;
+        padding-left: 25px;
+        position: relative;
+      }
+      .feature-list li:before {
+        content: "✅";
+        position: absolute;
+        left: 0;
+      }
+      .cta {
+        text-align: center;
+        margin-top: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        color: white;
+      }
+      .cta a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎉 Error Handling Fixed!</h1>
+      <p class="subtitle">Your HomeXPros marketplace now provides crystal-clear user feedback</p>
+
+      <div class="demo-section">
+        <div class="demo-title">📞 Phone Number Validation</div>
+        <p>
+          The backend now accepts multiple Canadian phone number formats and provides helpful error
+          messages:
+        </p>
+
+        <div class="phone-examples">
+          <div class="example valid">
+            <div class="status">✅ VALID</div>
+            <div><strong>4165551234</strong></div>
+            <small>10-digit format</small>
+          </div>
+
+          <div class="example valid">
+            <div class="status">✅ VALID</div>
+            <div><strong>(416) 555-1234</strong></div>
+            <small>Formatted with parentheses</small>
+          </div>
+
+          <div class="example valid">
+            <div class="status">✅ VALID</div>
+            <div><strong>+1-416-555-1234</strong></div>
+            <small>With country code</small>
+          </div>
+
+          <div class="example invalid">
+            <div class="status">❌ INVALID</div>
+            <div><strong>123</strong></div>
+            <small>Too short</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <div class="demo-title">🔔 Error Toast Notifications</div>
+        <p>When validation fails, users now see beautiful, informative error messages:</p>
+
+        <div class="toast-demo">
+          Please enter a valid Canadian phone number (e.g., 4165551234, (416) 555-1234, or
+          +1-416-555-1234)
+        </div>
+
+        <ul class="feature-list">
+          <li>Gradient red styling for visibility</li>
+          <li>6-second duration for better readability</li>
+          <li>Specific validation messages</li>
+          <li>Examples of correct formats</li>
+        </ul>
+      </div>
+
+      <div class="demo-section">
+        <div class="demo-title">🎨 User Experience Improvements</div>
+        <ul class="feature-list">
+          <li>Enhanced error extraction from API responses</li>
+          <li>Console logging for developers</li>
+          <li>Helper text in registration form</li>
+          <li>Multiple phone format examples</li>
+          <li>Consistent error handling across all auth flows</li>
+          <li>Beautiful styled notifications</li>
+        </ul>
+      </div>
+
+      <div class="demo-section">
+        <div class="demo-title">🧪 Technical Implementation</div>
+        <p><strong>Backend Changes:</strong></p>
+        <ul class="feature-list">
+          <li>Flexible phone validation regex</li>
+          <li>Accepts formatted numbers with spaces, parentheses, dashes</li>
+          <li>Strips non-digit characters for validation</li>
+          <li>Clear, actionable error messages</li>
+        </ul>
+
+        <p><strong>Frontend Changes:</strong></p>
+        <ul class="feature-list">
+          <li>Enhanced error extraction from API responses</li>
+          <li>Styled toast notifications with gradients</li>
+          <li>Improved error handling in auth slice</li>
+          <li>Better user guidance in forms</li>
+        </ul>
+      </div>
+
+      <div class="cta">
+        <p>🚀 <strong>Ready to Test?</strong></p>
+        <a href="http://localhost:3000" target="_blank">Visit Your HomeXPros Marketplace →</a>
+        <p style="margin-top: 10px; font-size: 0.9rem">
+          Try registering with different phone number formats to see the improved error handling in
+          action!
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
